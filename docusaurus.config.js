@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'My Site',
+  title: 'Pantheon API',
   tagline: 'The tagline of my site',
   url: 'https://your-docusaurus-test-site.com',
   baseUrl: '/',
