@@ -1,33 +1,20 @@
-# Website
+# Pantheon API Docs
 
-This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
+This website is built using [Docusaurus 2](https://v2.docusaurus.io/).
 
-## Installation
-
-```console
-yarn install
-```
-
-## Local Development
+## Setup
 
 ```console
-yarn start
+npm install
+npm start
 ```
 
-This command starts a local development server and open up a browser window. Most changes are reflected live without having to restart the server.
-
-## Build
-
-```console
-yarn build
-```
-
-This command generates static content into the `build` directory and can be served using any static contents hosting service.
+`npm start` starts a local development server on http://localhost:3000 and opens a browser window, which will auto-reload as you make changes to the documentation.
 
 ## Deployment
+We deploy to Vercel. To deploy, you only need to commit your changes and push to a branch on GitHub. You can view docs for your branch at http://pantheon-git-branchname.vercel.app. After your PR is merged to master, the updated docs should show up on http://vercel.app in about 2 minutes.
 
-```console
-GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
-```
+## Editing Documentation
+Reference documentation for each microservice should be edited in an `openapi.yaml` file in the service's repo. Our CI pipeline will automatically build the OpenAPI spec into a Markdown file and push it to this repo, which will update the live docs.
 
-If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+All other forms of documentation (guides, blog posts, etc) and static pages should be edited directly here. Blog posts go into the blog/ folder, and static pages are built as React files in src/pages/. See [the Docusaurus docs](https://v2.docusaurus.io/docs/) for more details.
