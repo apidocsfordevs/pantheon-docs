@@ -1,0 +1,236 @@
+---
+title: Getting Started
+slug: /
+---
+
+In this article, we'll demonstrate how you can set up your projects to use the Pantheon API by making a simple API call to start a conversation.
+
+# Create an app
+First, you'll need to [sign up](http://pantheon.api/signup) for Pantheon if you haven't already, and [create an app](http://pantheon.api/apps/create) on your Pantheon developer dashboard.
+
+# Set up the SDK
+Pantheon provides SDKs for several languages and platforms. Here are links to our currently available SDKs, where you'll find detailed setup and installation instructions:
+- [JavaScript](https://github.com/pantheon-api/pantheon-js)
+- [PHP](https://github.com/pantheon-api/pantheon-php)
+
+If your language isn't supported, no worries. You can follow this guide with cURL or any API tool of your choice, and we'll explain each step involved.
+
+Install the library:
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+  groupId="pgl"
+  defaultValue="js"
+  values={[
+    {label: 'JavaScript', value: 'js'},
+    {label: 'PHP', value: 'php'},
+  ]}>
+<TabItem value="js">
+
+```
+npm install pantheon-api
+```
+
+</TabItem>
+<TabItem value="php">
+
+```
+composer require pantheon-api
+```
+
+</TabItem>
+</Tabs>
+
+Then configure it with your credentials:
+
+<Tabs
+  groupId="pgl"
+  defaultValue="js"
+  values={[
+    {label: 'JavaScript', value: 'js'},
+    {label: 'PHP', value: 'php'},
+  ]}>
+<TabItem value="js">
+
+```js
+const client = require('pantheon-api').createClient({
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+})
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$client = new \Pantheon\Client([
+    'clientId'  => getenv('CLIENT_ID'),
+    'clientSecret'  => getenv('CLIENT_SECRET'),
+]);
+```
+
+</TabItem>
+</Tabs>
+
+
+# Authenticate your requests
+The next step will be to authenticate your calls. "Authentication" here means exchaning your credentials for a short-lived access token that authorizes you to access the Pantheon API. If you're using one of our official libraries, then you don't need to bother with this, as it will be automatically handled on each request. However, you can still force this manually by calling the `refreshToken()` function.
+
+If you aren't using one of our official libraries, you can do this manually.
+
+First, concatenate your app's client secret and ID (from the "Keys" section of your dashboard) in the format `your-client-id:your-client-secret`, and then encode with base64.
+
+
+Then make a POST request to http://pantheon.api/v1.0/auth/getAccessToken with the encoded value in an `Authorization` header (prefixed with `'Basic '`), and a body parameter `grant_type` set to "client_credentials".
+
+<Tabs
+  groupId="pgl"
+  defaultValue="js"
+  values={[
+    {label: 'JavaScript', value: 'js'},
+    {label: 'PHP', value: 'php'},
+    {label: 'cURL', value: 'curl'},
+  ]}>
+<TabItem value="js">
+
+```js
+// optional
+await client.refreshToken();
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+// optional
+$client->refreshToken();
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```curl
+curl -X POST \
+    "http://pantheon.api/v1.0/auth/getAccessToken" \
+    -H "Content-Type: application/json" \
+    -H "Accept: application/json" \
+    -H "Authorization: Basic SUtJQTFCNzU5M0M0NDAyQkM1RTAwQzQ2QUM4QjFDMUNDMEI4NUVFQkIwODg6c2VjcmV0" \
+    -d '{"grant_type":"client_credentials"}'
+```
+
+</TabItem>
+</Tabs>
+
+The response will contain an `access_token` valid for 4 hours (indicated in the `expires_in` parameter in the response) and a `refresh_token` that can be used to get a new token.
+
+```json
+{
+  "access_token": "lkjoujh8673u84j98f7nf545x3zxc320k9j8gn3gujhsJRD#E",
+  "refresh_token": "mouiyhg75rcvBVCbkhj5437rgfsgs",
+  "token_type": "bearer",
+  "expires_in": 86400
+}
+```
+
+The refresh token is useful for retrieving a new token when the current one expires.
+
+
+# Calling the API
+Now, we're ready to talk to the API!
+
+Let's start a conversation between our app and a user. To do this, we'll use the [startConversation endpoint](../conversations.md#startConversation), which takes in three parameters.
+
+:::caution
+If you're making your calls manually, make sure to include the access token from the previous step as a Bearer token in the Authorization header.
+:::
+
+<Tabs
+  groupId="pgl"
+  defaultValue="js"
+  values={[
+    {label: 'JavaScript', value: 'js'},
+    {label: 'PHP', value: 'php'},
+    {label: 'cURL', value: 'curl'},
+  ]}>
+<TabItem value="js">
+
+```js
+const response = await client.conversations.startConversation({on: "SLACK", with: "@shalvah", message: "Hey there"});
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$response = $client->conversations->startConversation(['on' => "SLACK", "with" => "@shalvah", "message" => "Hey there!"]);
+```
+
+</TabItem>
+<TabItem value="curl">
+
+```curl
+curl "http://pantheon.api/v1.0/conversations/startConversation/" \
+    -H "Accept: application/json" \
+    -H "Authorization: Bearer lkjoujh8673u84j98f7nf545x3zxc320k9j8gn3gujhsJRD" \
+    -d '{"on":"SLACK","with":"@shalvah","message":"Hey there"}'
+```
+
+</TabItem>
+</Tabs>
+
+
+# Examining the response
+The startConversation endpoint returns a JSON response containing the `conversationId`:
+
+```json
+{
+    "conversationId": "bdfc45783"
+}
+```
+
+If there's an error with your input, you'll get a 400 status code, and details about the problems in the response:
+
+```json
+{
+    "message": "There was a problem with your input",
+    "errors": [
+        "on": {
+            "No supported messaging platform with the ID SLACKED."
+        }
+    ]
+}
+```
+
+:::tip
+If you're using an official library, you can access the data property on the response to get the JSON response. It will be parsed into a data transfer object (DTO), allowing you to retrieve fields directly without any extra parsing.
+:::
+
+<Tabs
+  groupId="pgl"
+  defaultValue="js"
+  values={[
+    {label: 'JavaScript', value: 'js'},
+    {label: 'PHP', value: 'php'},
+    {label: 'cURL', value: 'curl'},
+  ]}>
+<TabItem value="js">
+
+```js
+const response = await client.conversations.startConversation({on: "SLACK", with: "@shalvah", message: "Hey there"});
+const conversationId = response.data.conversationId;
+```
+
+</TabItem>
+<TabItem value="php">
+
+```php
+$response = $client->conversations->startConversation(['on' => "SLACK", "with" => "@shalvah", "message" => "Hey there!"]);$conversationId = $response->data->conversationId;
+```
+
+</TabItem>
+</Tabs>
+
+
+Cool! We're all set up and ready to talk to the Pantheon API. Learn more about [carrying on conversations in Panatheon](./conversations-in-pantheon).
