@@ -46,7 +46,7 @@ Base URLs:
 # You can also use wget
 curl -X POST http://pantheon.api/v1.0/conversations/startConversation \
   -H 'Content-Type: application/json' \
-  -H 'Accept: application/json' \
+  -H 'Accept: application/json; charset=utf-8' \
   -H 'Authorization: API_KEY'
 
 ```
@@ -55,7 +55,7 @@ curl -X POST http://pantheon.api/v1.0/conversations/startConversation \
 POST http://pantheon.api/v1.0/conversations/startConversation HTTP/1.1
 Host: pantheon.api
 Content-Type: application/json
-Accept: application/json
+Accept: application/json; charset=utf-8
 
 ```
 
@@ -66,7 +66,7 @@ const inputBody = '{
 }';
 const headers = {
   'Content-Type':'application/json',
-  'Accept':'application/json',
+  'Accept':'application/json; charset=utf-8',
   'Authorization':'API_KEY'
 };
 
@@ -90,7 +90,7 @@ require 'json'
 
 headers = {
   'Content-Type' => 'application/json',
-  'Accept' => 'application/json',
+  'Accept' => 'application/json; charset=utf-8',
   'Authorization' => 'API_KEY'
 }
 
@@ -106,7 +106,7 @@ p JSON.parse(result)
 import requests
 headers = {
   'Content-Type': 'application/json',
-  'Accept': 'application/json',
+  'Accept': 'application/json; charset=utf-8',
   'Authorization': 'API_KEY'
 }
 
@@ -123,7 +123,7 @@ require 'vendor/autoload.php';
 
 $headers = array(
     'Content-Type' => 'application/json',
-    'Accept' => 'application/json',
+    'Accept' => 'application/json; charset=utf-8',
     'Authorization' => 'API_KEY',
 );
 
@@ -178,7 +178,7 @@ func main() {
 
     headers := map[string][]string{
         "Content-Type": []string{"application/json"},
-        "Accept": []string{"application/json"},
+        "Accept": []string{"application/json; charset=utf-8"},
         "Authorization": []string{"API_KEY"},
     }
 
