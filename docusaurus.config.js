@@ -1,7 +1,7 @@
 module.exports = {
   title: 'Pantheon API',
   tagline: 'The tagline of my site',
-  url: 'https://your-docusaurus-test-site.com',
+  url: 'https://credo-git-staging.vercel.app',
   baseUrl: '/',
   onBrokenLinks: 'warn',
   favicon: 'img/favicon.ico',
